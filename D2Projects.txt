@@ -1,0 +1,44 @@
+from news_portal.models import User, Author, Category, Post, Comment, PostCategory
+
+User.objects.create_user('username'#сюда записываете свой никнейм)
+#выполняем эту команду 2 раза по ТЗ
+
+Author.objects.create(authorUser=User.objects.get(pk=...#создаем автора, связывая его с юзером по его id))
+#выполняем эту команду 2 раза, т.к по ТЗ надо сделать двух привязанных Авторов с объектами сущности User
+
+Category.objects.create(name_of_category=Category.daily)
+Category.objects.create(name_of_category=Category.sport)
+Category.objects.create(name_of_category=Category.politics)
+Category.objects.create(name_of_category=Category.education)
+#создаём 4 категории по ТЗ
+
+Post.objects.create(type_of_post=Post.article, heading='#заголовок', text_of_post='#текст статьи', author=Author.objects.get(pk=...#присваиваем автора статьи по его id))
+Post.object.get(pk=...).category.set([#категории Category.objects.get(pk=...), ])#Через объект нашей статьи с помощью метода .set() устанавливаем значения категорий статьи
+#создаём ещё одну статью по ТЗ
+
+Post.objects.create(type_of_post=Post.news, heading='#заголовок', text_of_post='#текст новости', author=Author.objects.get(pk=...#присваиваем автора новости по его id))
+Post.object.get(pk=...).category.set([#категории Category.objects.get(pk=...), ])#Через объект нашей новости с помощью метода .set() устанавливаем значения категорий новости
+#Нам надо было сделать одну новость по ТЗ
+
+Comment.objects.create(text_of_comment='#текст комментария', post=Post.objects.get(pk=...)#указываем, к какому посту хотим добавить комментарий, user=User.objects.get(pk=...)#комментарий может оставлять любой пользователь)
+#создаём таким образом 4 разных комментария и более по ТЗ
+
+Comment.objects.get(pk=...).like()/dislike()
+Post.objects.get(pk=...).like()/dislike()
+#Изменяем рейтинг постов и комментариев путём установления лайков и дизлайков на объекты сущностей Post/Comment
+
+
+Author.objects.get(pk=...).update_rating()#обновляем рейтинги авторов
+
+
+Author.objects.all().order_by('-rating').values('authorUser__username', 'rating')[0]
+#получаем лучшего автора
+
+
+Post.objects.filter(type_of_post=Post.article).aggregate(Max('rating'))#получаем максимальный рейтинг
+Post.objects.filter(rating=...).values('time_in', 'rating', 'author__authorUser__username', 'heading', 'id')#получаем статью(-ьи) с высшим рейтингом(id дописал для того, чтобы потом вызвать preview)
+#Получив id, мы можем именно от этого объекта(-ов) сущности Post вызвать метод preview()
+Post.objects.get(pk=...).preview()
+
+Comment.objects.filter(post_id=...#айди высшей статьи, нашли его выше).values('time_in','post__author__authorUser__username', 'rating', 'text_of_comment')#по id статьи с высшим рейтингом пролучаем нужную нам информацию
+
